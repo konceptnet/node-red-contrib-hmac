@@ -30,9 +30,34 @@ module.exports = function (RED) {
     node.prefix = config.prefix || "";
     node.secretEnv = config.secretEnv || "";
 
+    const ALLOWED_ALGORITHMS = ["sha1", "sha256", "sha512"];
+    const ALLOWED_ENCODINGS = ["hex", "base64"];
+
+    node.configError = null;
+    if (ALLOWED_ALGORITHMS.indexOf(node.algorithm) === -1) {
+      node.configError =
+        "hmac-verify: invalid algorithm '" + node.algorithm +
+        "' (allowed: " + ALLOWED_ALGORITHMS.join(", ") + ")";
+    } else if (ALLOWED_ENCODINGS.indexOf(node.encoding) === -1) {
+      node.configError =
+        "hmac-verify: invalid encoding '" + node.encoding +
+        "' (allowed: " + ALLOWED_ENCODINGS.join(", ") + ")";
+    }
+    if (node.configError) {
+      node.error(node.configError);
+      node.status({ fill: "red", shape: "ring", text: "bad config" });
+    }
+
     node.on("input", function (msg, send, done) {
       send = send || function () { node.send.apply(node, arguments); };
       done = done || function (err) { if (err) { node.error(err, msg); } };
+
+      if (node.configError) {
+        msg.hmacValid = false;
+        send([null, msg]);
+        done(new Error(node.configError));
+        return;
+      }
 
       try {
         const secret =

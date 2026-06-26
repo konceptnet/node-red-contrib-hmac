@@ -102,7 +102,14 @@ describe("hmac-verify node", function () {
   it("supports sha512", function (done) {
     helper.load(hmacNode, flow({ algorithm: "sha512" }), { n1: { secret: SECRET } }, function () {
       const n1 = helper.getNode("n1");
-      helper.getNode("okOut").on("input", () => done());
+      helper.getNode("okOut").on("input", function (msg) {
+        try {
+          require("chai").expect(msg.hmacValid).to.equal(true);
+          done();
+        } catch (e) {
+          done(e);
+        }
+      });
       helper.getNode("badOut").on("input", () => done(new Error("sha512 valid sig rejected")));
       n1.receive({ payload: "hello", signature: sign("hello", "sha512") });
     });
@@ -111,7 +118,14 @@ describe("hmac-verify node", function () {
   it("supports base64 encoding", function (done) {
     helper.load(hmacNode, flow({ encoding: "base64" }), { n1: { secret: SECRET } }, function () {
       const n1 = helper.getNode("n1");
-      helper.getNode("okOut").on("input", () => done());
+      helper.getNode("okOut").on("input", function (msg) {
+        try {
+          require("chai").expect(msg.hmacValid).to.equal(true);
+          done();
+        } catch (e) {
+          done(e);
+        }
+      });
       helper.getNode("badOut").on("input", () => done(new Error("base64 valid sig rejected")));
       n1.receive({ payload: "hello", signature: sign("hello", "sha256", "base64") });
     });
@@ -120,7 +134,14 @@ describe("hmac-verify node", function () {
   it("strips a configured prefix (e.g. sha256=)", function (done) {
     helper.load(hmacNode, flow({ prefix: "sha256=" }), { n1: { secret: SECRET } }, function () {
       const n1 = helper.getNode("n1");
-      helper.getNode("okOut").on("input", () => done());
+      helper.getNode("okOut").on("input", function (msg) {
+        try {
+          require("chai").expect(msg.hmacValid).to.equal(true);
+          done();
+        } catch (e) {
+          done(e);
+        }
+      });
       helper.getNode("badOut").on("input", () => done(new Error("prefixed valid sig rejected")));
       n1.receive({ payload: "hello", signature: "sha256=" + sign("hello") });
     });
@@ -135,6 +156,27 @@ describe("hmac-verify node", function () {
         done();
       });
       n1.receive({ payload: "hello", signature: "ab" }); // far shorter than a real digest
+    });
+  });
+
+  it("with an invalid algorithm config, routes to output 2 and calls node.error", function (done) {
+    helper.load(hmacNode, flow({ algorithm: "md5" }), { n1: { secret: SECRET } }, function () {
+      const n1 = helper.getNode("n1");
+      const ok = helper.getNode("okOut");
+      const bad = helper.getNode("badOut");
+      let errored = false;
+      n1.error = function () { errored = true; }; // spy
+      ok.on("input", () => done(new Error("bad-config sig accepted")));
+      bad.on("input", function (msg) {
+        try {
+          require("chai").expect(msg.hmacValid).to.equal(false);
+          require("chai").expect(errored).to.equal(true);
+          done();
+        } catch (e) {
+          done(e);
+        }
+      });
+      n1.receive({ payload: "hello", signature: sign("hello") });
     });
   });
 });
