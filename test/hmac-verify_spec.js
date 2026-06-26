@@ -78,4 +78,24 @@ describe("hmac-verify node", function () {
       n1.receive({ payload: "hello", signature: "deadbeef" });
     });
   });
+
+  it("with no secret, calls node.error and routes to output 2", function (done) {
+    // Load with no credentials and no env var.
+    helper.load(hmacNode, flow(), {}, function () {
+      const n1 = helper.getNode("n1");
+      const bad = helper.getNode("badOut");
+      let errored = false;
+      n1.error = function () { errored = true; }; // spy
+      bad.on("input", function (msg) {
+        try {
+          require("chai").expect(msg.hmacValid).to.equal(false);
+          require("chai").expect(errored).to.equal(true);
+          done();
+        } catch (e) {
+          done(e);
+        }
+      });
+      n1.receive({ payload: "hello", signature: "anything" });
+    });
+  });
 });
