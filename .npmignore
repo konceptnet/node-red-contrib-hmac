@@ -1,3 +1,8 @@
 test/
 .github/
 .gitignore
+.claude-flow/
+.swarm/
+ruvector.db
+*.rvf
+*.tgz

@@ -16,6 +16,13 @@
     "url": "git+https://github.com/konceptnet/node-red-contrib-hmac.git"
   },
   "homepage": "https://github.com/konceptnet/node-red-contrib-hmac#readme",
+  "files": [
+    "hmac-verify.js",
+    "hmac-verify.html",
+    "examples/",
+    "README.md",
+    "LICENSE"
+  ],
   "node-red": {
     "nodes": {
       "hmac-verify": "hmac-verify.js"
