@@ -1,0 +1,30 @@
+[
+  {
+    "id": "demo-inject",
+    "type": "inject",
+    "name": "fake signed webhook",
+    "props": [
+      { "p": "payload" },
+      { "p": "signature", "v": "", "vt": "str" }
+    ],
+    "payload": "hello",
+    "payloadType": "str",
+    "wires": [["demo-hmac"]]
+  },
+  {
+    "id": "demo-hmac",
+    "type": "hmac-verify",
+    "name": "verify",
+    "algorithm": "sha256",
+    "payloadProp": "payload",
+    "payloadPropType": "msg",
+    "signatureProp": "signature",
+    "signaturePropType": "msg",
+    "encoding": "hex",
+    "prefix": "",
+    "secretEnv": "",
+    "wires": [["demo-ok"], ["demo-bad"]]
+  },
+  { "id": "demo-ok", "type": "debug", "name": "valid", "wires": [] },
+  { "id": "demo-bad", "type": "debug", "name": "invalid", "wires": [] }
+]
