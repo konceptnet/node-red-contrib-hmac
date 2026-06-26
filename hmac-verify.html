@@ -1,0 +1,99 @@
+<script type="text/javascript">
+  RED.nodes.registerType("hmac-verify", {
+    category: "security",
+    color: "#5B9BD5",
+    defaults: {
+      name: { value: "" },
+      algorithm: { value: "sha256" },
+      payloadProp: { value: "payload", required: true },
+      payloadPropType: { value: "msg" },
+      signatureProp: { value: "req.headers.x-signature", required: true },
+      signaturePropType: { value: "msg" },
+      encoding: { value: "hex" },
+      prefix: { value: "" },
+      secretEnv: { value: "" }
+    },
+    credentials: {
+      secret: { type: "password" }
+    },
+    inputs: 1,
+    outputs: 2,
+    outputLabels: ["valid", "invalid"],
+    icon: "font-awesome/fa-shield",
+    paletteLabel: "hmac verify",
+    label: function () {
+      return this.name || "hmac verify";
+    },
+    oneditprepare: function () {
+      $("#node-input-payloadProp").typedInput({
+        typeField: "#node-input-payloadPropType",
+        types: ["msg"]
+      });
+      $("#node-input-signatureProp").typedInput({
+        typeField: "#node-input-signaturePropType",
+        types: ["msg"]
+      });
+    }
+  });
+</script>
+
+<script type="text/html" data-template-name="hmac-verify">
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" placeholder="Name" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-algorithm"><i class="fa fa-cogs"></i> Algorithm</label>
+    <select id="node-input-algorithm">
+      <option value="sha1">sha1</option>
+      <option value="sha256">sha256</option>
+      <option value="sha512">sha512</option>
+    </select>
+  </div>
+  <div class="form-row">
+    <label for="node-input-secret"><i class="fa fa-key"></i> Secret</label>
+    <input type="password" id="node-input-secret" placeholder="stored encrypted" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-secretEnv"><i class="fa fa-leaf"></i> Secret env</label>
+    <input type="text" id="node-input-secretEnv" placeholder="(optional) env var name if Secret is empty" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-payloadProp"><i class="fa fa-sign-in"></i> Payload</label>
+    <input type="text" id="node-input-payloadProp" />
+    <input type="hidden" id="node-input-payloadPropType" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-signatureProp"><i class="fa fa-pencil"></i> Signature</label>
+    <input type="text" id="node-input-signatureProp" />
+    <input type="hidden" id="node-input-signaturePropType" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-encoding"><i class="fa fa-font"></i> Encoding</label>
+    <select id="node-input-encoding">
+      <option value="hex">hex</option>
+      <option value="base64">base64</option>
+    </select>
+  </div>
+  <div class="form-row">
+    <label for="node-input-prefix"><i class="fa fa-scissors"></i> Strip prefix</label>
+    <input type="text" id="node-input-prefix" placeholder="e.g. sha256=" />
+  </div>
+</script>
+
+<script type="text/html" data-help-name="hmac-verify">
+  <p>Verifies the HMAC signature of an incoming message (e.g. a webhook).</p>
+  <h3>Outputs</h3>
+  <ol class="node-ports">
+    <li>valid — message passes through, <code>msg.hmacValid = true</code></li>
+    <li>invalid / error — <code>msg.hmacValid = false</code></li>
+  </ol>
+  <h3>Secret</h3>
+  <p>Set the <b>Secret</b> field (stored encrypted as a credential), or leave it empty
+  and give the name of an environment variable in <b>Secret env</b>.</p>
+  <h3>Raw body matters</h3>
+  <p>The HMAC must be computed over the <b>raw</b> request body. If an upstream node
+  already parsed the JSON, re-serializing <code>msg.payload</code> may produce different
+  bytes and the signature will not match. Prefer feeding the raw body
+  (e.g. <code>msg.req.rawBody</code>).</p>
+</script>
