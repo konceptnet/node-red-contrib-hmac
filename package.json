@@ -1,5 +1,5 @@
 {
-  "name": "node-red-contrib-konceptnet-hmac",
+  "name": "node-red-contrib-hmac",
   "version": "0.1.0",
   "description": "Node-RED node to verify HMAC signatures of incoming webhooks (constant-time, sha1/sha256/sha512).",
   "keywords": [
@@ -13,9 +13,9 @@
   "author": "konceptnet",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/konceptnet/node-red-contrib-konceptnet-hmac.git"
+    "url": "git+https://github.com/konceptnet/node-red-contrib-hmac.git"
   },
-  "homepage": "https://github.com/konceptnet/node-red-contrib-konceptnet-hmac#readme",
+  "homepage": "https://github.com/konceptnet/node-red-contrib-hmac#readme",
   "node-red": {
     "nodes": {
       "hmac-verify": "hmac-verify.js"

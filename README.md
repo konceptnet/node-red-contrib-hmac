@@ -1,4 +1,4 @@
-# node-red-contrib-konceptnet-hmac
+# node-red-contrib-hmac
 
 A Node-RED node that verifies the **HMAC signature** of incoming webhooks.
 Constant-time comparison, `sha1` / `sha256` / `sha512`, `hex` / `base64`, optional
@@ -6,11 +6,11 @@ prefix stripping (e.g. GitHub's `sha256=`). Zero runtime dependencies.
 
 ## Install
 
-From the Node-RED palette manager search for `node-red-contrib-konceptnet-hmac`,
+From the Node-RED palette manager search for `node-red-contrib-hmac`,
 or in your Node-RED userDir:
 
 ```bash
-npm install node-red-contrib-konceptnet-hmac
+npm install node-red-contrib-hmac
 ```
 
 ## The `hmac verify` node
