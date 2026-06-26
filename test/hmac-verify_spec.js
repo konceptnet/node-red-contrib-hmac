@@ -60,4 +60,22 @@ describe("hmac-verify node", function () {
       n1.receive({ payload: "hello", signature: sign("hello") });
     });
   });
+
+  it("routes an invalid signature to output 2 with hmacValid=false", function (done) {
+    helper.load(hmacNode, flow(), { n1: { secret: SECRET } }, function () {
+      const n1 = helper.getNode("n1");
+      const ok = helper.getNode("okOut");
+      const bad = helper.getNode("badOut");
+      ok.on("input", () => done(new Error("should not reach valid output")));
+      bad.on("input", function (msg) {
+        try {
+          require("chai").expect(msg.hmacValid).to.equal(false);
+          done();
+        } catch (e) {
+          done(e);
+        }
+      });
+      n1.receive({ payload: "hello", signature: "deadbeef" });
+    });
+  });
 });
