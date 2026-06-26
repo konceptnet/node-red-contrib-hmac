@@ -1,5 +1,9 @@
 # node-red-contrib-hmac
 
+[![npm version](https://img.shields.io/npm/v/node-red-contrib-hmac.svg)](https://www.npmjs.com/package/node-red-contrib-hmac)
+[![CI](https://github.com/konceptnet/node-red-contrib-hmac/actions/workflows/ci.yml/badge.svg)](https://github.com/konceptnet/node-red-contrib-hmac/actions/workflows/ci.yml)
+[![license: MIT](https://img.shields.io/npm/l/node-red-contrib-hmac.svg)](LICENSE)
+
 A Node-RED node that verifies the **HMAC signature** of incoming webhooks.
 Constant-time comparison, `sha1` / `sha256` / `sha512`, `hex` / `base64`, optional
 prefix stripping (e.g. GitHub's `sha256=`). Zero runtime dependencies.
